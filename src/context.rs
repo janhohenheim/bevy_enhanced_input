@@ -326,7 +326,7 @@ fn register<C: Component, S: ScheduleLabel>(
 }
 
 fn unregister<C: Component, S: ScheduleLabel>(
-    replace: On<Replace, ContextPriority<C>>,
+    replace: On<Discard, ContextPriority<C>>,
     mut instances: ResMut<ContextInstances<S>>,
 ) {
     debug!(
@@ -656,8 +656,8 @@ pub type ActionsQuery<'w, 's> = Query<
 fn apply<S: ScheduleLabel>(
     mut commands: Commands,
     instances: Res<ContextInstances<S>>,
-    contexts: Query<FilteredEntityRef, Without<ActionFns>>,
-    mut actions: Query<EntityMut, With<ActionFns>>,
+    contexts: Query<FilteredEntityRef, (Without<ActionFns>)>,
+    mut actions: Query<EntityMut, (With<ActionFns>, Without<ContextInstances<S>>)>,
 ) {
     for instance in &**instances {
         let Ok(context) = contexts.get(instance.entity()) else {
